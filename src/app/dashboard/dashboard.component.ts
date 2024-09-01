@@ -2,16 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { DataFetchService } from '../data-fetch.service';
 
+// Define a type for your product categories
+type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  storeNames: string[] = ['The Corner Store','Market Basket', 'Main Street Mart'];
-  productCategories: string[] = ['Gaming Console','Guitar','Clarinet'];
-  years: string[] = ['2024', '2025','2026','2027'];
-  months: string[] = ['01', '02', '03','04','05','06','07','08', '09'];
+  storeNames: string[] = ['The Corner Store', 'Market Basket', 'Main Street Mart'];
+  productCategories: ProductCategory[] = ['Gaming Console', 'Guitar', 'Clarinet'];
+  years: string[] = ['2024', '2025', '2026', '2027'];
+  months: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09'];
   
   selectedStoreName: string = '';
   selectedProductCategory: string = '';
@@ -26,15 +29,36 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {}
 
   onSelectionChange(): void {
-    const prompt = `${this.selectedMonth ? this.selectedMonth + '-' : ''}${this.selectedYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+    // Handle year and month selection correctly
+    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
+    const yearPart = this.selectedYear ? `${this.selectedYear}` : '';
+  
+    const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+  
+    // Call the API with the correctly formatted prompt
     this.dataFetchService.getData(prompt).subscribe(data => {
       this.createCharts(data);
     });
   }
+  
 
   createCharts(data: any[]): void {
-    const labels = data.map(d => d.Date);
-    const stockSold = data.map(d => d.Stock_Sold);
+    const labels = [...new Set(data.map(d => d.Date))];
+    const productCategories = [...new Set(data.map(d => d.Product_Category))] as ProductCategory[];
+
+    const datasets = productCategories.map(category => {
+      return {
+        label: category,
+        data: labels.map(date => {
+          const entry = data.find(d => d.Date === date && d.Product_Category === category);
+          return entry ? entry.Stock_Sold : 0;
+        }),
+        fill: false,
+        borderColor: this.getColor(category),
+        backgroundColor: this.getColor(category, true),
+        borderWidth: 2
+      };
+    });
 
     // Line Chart
     const lineCanvas = document.getElementById('lineChart') as HTMLCanvasElement;
@@ -44,13 +68,22 @@ export class DashboardComponent implements OnInit {
       type: 'line',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'Stock Sold',
-          data: stockSold,
-          fill: false,
-          borderColor: 'blue',
-          tension: 0.1
-        }]
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                return `${context.dataset.label}: ${context.raw}`;
+              }
+            }
+          }
+        }
       }
     });
 
@@ -62,12 +95,45 @@ export class DashboardComponent implements OnInit {
       type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'Stock Sold',
-          data: stockSold,
-          backgroundColor: 'orange'
-        }]
+        datasets: datasets.map(dataset => ({
+          ...dataset,
+          type: 'bar', // Ensure bars for bar chart
+          backgroundColor: dataset.backgroundColor,
+          borderColor: dataset.borderColor
+        }))
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            stacked: true
+          }
+        },
+        plugins: {
+          legend: {
+            display: true
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                return `${context.dataset.label}: ${context.raw}`;
+              }
+            }
+          }
+        }
       }
     });
+  }
+
+  getColor(category: ProductCategory, isBackground: boolean = false): string {
+    const colors: Record<ProductCategory, string> = {
+      'Clarinet': isBackground ? 'rgba(255, 99, 132, 0.2)' : 'rgba(255, 99, 132, 1)',
+      'Guitar': isBackground ? 'rgba(54, 162, 235, 0.2)' : 'rgba(54, 162, 235, 1)',
+      'Gaming Console': isBackground ? 'rgba(75, 192, 192, 0.2)' : 'rgba(75, 192, 192, 1)',
+    };
+    return colors[category] || (isBackground ? 'rgba(201, 203, 207, 0.2)' : 'rgba(201, 203, 207, 1)');
   }
 }
