@@ -1,1 +1,27 @@
-<p>dashboard works!</p>
+<div class="filters">
+    <select [(ngModel)]="selectedStoreName" (change)="onSelectionChange()">
+      <option value="">Select Store</option>
+      <option *ngFor="let store of storeNames" [value]="store">{{store}}</option>
+    </select>
+  
+    <select [(ngModel)]="selectedProductCategory" (change)="onSelectionChange()">
+      <option value="">Select Product</option>
+      <option *ngFor="let category of productCategories" [value]="category">{{category}}</option>
+    </select>
+  
+    <select [(ngModel)]="selectedYear" (change)="onSelectionChange()">
+      <option value="">Select Year</option>
+      <option *ngFor="let year of years" [value]="year">{{year}}</option>
+    </select>
+  
+    <select [(ngModel)]="selectedMonth" (change)="onSelectionChange()">
+      <option value="">Select Month</option>
+      <option *ngFor="let month of months" [value]="month">{{month}}</option>
+    </select>
+  </div>
+  
+  <div class="charts">
+    <canvas id="lineChart"></canvas>
+    <canvas id="barChart"></canvas>
+  </div>
+  
