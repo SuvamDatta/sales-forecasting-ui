@@ -10,8 +10,14 @@ mat-form-field {
   flex: 1;
 }
 
+.charts {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
 .chart-container {
-  margin-top: 20px;
+  flex: 1;
   padding: 20px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -20,5 +26,5 @@ mat-form-field {
 
 .chart-container canvas {
   width: 100% !important;
-  height: auto !important;
+  height: 400px !important;
 }
