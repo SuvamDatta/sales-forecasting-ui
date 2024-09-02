@@ -1,30 +1,40 @@
 <div class="filters">
-    <select [(ngModel)]="selectedStoreName" (change)="onSelectionChange()">
-      <option value="">Select Store</option>
-      <option *ngFor="let store of storeNames" [value]="store">{{store}}</option>
-    </select>
-  
-    <select [(ngModel)]="selectedProductCategory" (change)="onSelectionChange()">
-      <option value="">Select Product</option>
-      <option *ngFor="let category of productCategories" [value]="category">{{category}}</option>
-    </select>
-  
-    <select [(ngModel)]="selectedYear" (change)="onSelectionChange()">
-      <option value="">Select Year</option>
-      <option *ngFor="let year of years" [value]="year">{{year}}</option>
-    </select>
-  
-    <select [(ngModel)]="selectedMonth" (change)="onSelectionChange()">
-      <option value="">Select Month</option>
-      <option *ngFor="let month of months" [value]="month">{{month}}</option>
-    </select>
-  </div>
-  
-  <div class="chart-container">
-    <canvas id="lineChart"></canvas>
-  </div>
-  <div class="chart-container">
-    <canvas id="barChart"></canvas>
-  </div>
-  
-  
+  <mat-form-field appearance="fill">
+    <mat-label>Select Store</mat-label>
+    <mat-select [(value)]="selectedStoreName" (selectionChange)="onSelectionChange()">
+      <mat-option value="">None</mat-option>
+      <mat-option *ngFor="let store of storeNames" [value]="store">{{store}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select Product</mat-label>
+    <mat-select [(value)]="selectedProductCategory" (selectionChange)="onSelectionChange()">
+      <mat-option value="">None</mat-option>
+      <mat-option *ngFor="let category of productCategories" [value]="category">{{category}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select Year</mat-label>
+    <mat-select [(value)]="selectedYear" (selectionChange)="onSelectionChange()">
+      <mat-option value="">None</mat-option>
+      <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select Month</mat-label>
+    <mat-select [(value)]="selectedMonth" (selectionChange)="onSelectionChange()">
+      <mat-option value="">None</mat-option>
+      <mat-option *ngFor="let month of months" [value]="month">{{month}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="chart-container">
+  <canvas id="lineChart"></canvas>
+</div>
+<div class="chart-container">
+  <canvas id="barChart"></canvas>
+</div>
