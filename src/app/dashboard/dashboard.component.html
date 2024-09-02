@@ -40,3 +40,8 @@
     <canvas id="barChart"></canvas>
   </div>
 </div>
+
+<div *ngIf="previousYearData" class="previous-year-data">
+  <!-- <h3>Previous Year Data ({{selectedYear - 1}}):</h3> -->
+  <pre>{{ previousYearData | json }}</pre>
+</div>

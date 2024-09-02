@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { DataFetchService } from '../data-fetch.service';
+import { forkJoin } from 'rxjs';
 
-// Define a type for your product categories
 type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
 
 @Component({
@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
   productCategories: ProductCategory[] = ['Gaming Console', 'Guitar', 'Clarinet'];
   years: string[] = ['2024', '2025', '2026', '2027'];
   months: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09'];
-  
+
   selectedStoreName: string = '';
   selectedProductCategory: string = '';
   selectedYear: string = '';
@@ -23,24 +23,48 @@ export class DashboardComponent implements OnInit {
 
   lineChart: any;
   barChart: any;
+  previousYearData: any;
 
   constructor(private dataFetchService: DataFetchService) {}
 
   ngOnInit(): void {}
 
   onSelectionChange(): void {
-    // Handle year and month selection correctly
+    // Construct the prompt with the selected values
     const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
     const yearPart = this.selectedYear ? `${this.selectedYear}` : '';
-  
     const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
   
-    // Call the API with the correctly formatted prompt
-    this.dataFetchService.getData(prompt).subscribe(data => {
-      this.createCharts(data);
-    });
+    // Make the API call with the current selections
+    if (this.selectedStoreName || this.selectedProductCategory || this.selectedYear || this.selectedMonth) {
+      this.dataFetchService.getData(prompt).subscribe(data => {
+        this.createCharts(data);
+      });
+  
+      // Handle previous year data
+      if (this.selectedYear) {
+        const previousYear = (parseInt(this.selectedYear, 10) - 1).toString();
+        const previousYearPrompt = `${monthPart}${previousYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+        this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
+          this.previousYearData = previousYearData;
+        });
+      } else {
+        // Clear previous year data if no year is selected
+        this.previousYearData = null;
+      }
+    } else {
+      // Clear previous year data if no selection is made
+      this.previousYearData = null;
+    }
   }
   
+  
+
+  constructPrompt(year: string): string {
+    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
+    const yearPart = year;
+    return `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+  }
 
   createCharts(data: any[]): void {
     const labels = [...new Set(data.map(d => d.Date))];
