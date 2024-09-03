@@ -4,24 +4,40 @@
         <mat-card-title>Create an Account</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form>
+        <mat-card-subtitle *ngIf="message" [ngClass]="{'success-message': successMessage, 'error-message': !successMessage}">
+          {{ message }}
+        </mat-card-subtitle>
+        <form (ngSubmit)="onCreateAccount()" #createAccountForm="ngForm">
           <mat-form-field appearance="outline">
             <mat-label>Full Name</mat-label>
-            <input matInput type="text" required>
+            <input matInput [(ngModel)]="fullName" name="fullName" type="text" required #fullNameInput="ngModel">
+            <mat-error *ngIf="fullNameInput.invalid && fullNameInput.touched">
+              Full Name is required
+            </mat-error>
           </mat-form-field>
+          
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
-            <input matInput type="email" required>
+            <input matInput [(ngModel)]="email" name="email" type="email" required #emailInput="ngModel">
+            <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+              Email is required
+            </mat-error>
           </mat-form-field>
+          
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
-            <input matInput type="password" required>
+            <input matInput [(ngModel)]="password" name="password" type="password" required #passwordInput="ngModel">
+            <mat-error *ngIf="passwordInput.invalid && passwordInput.touched">
+              Password is required
+            </mat-error>
           </mat-form-field>
+          
           <mat-form-field appearance="outline">
             <mat-label>Confirm Password</mat-label>
-            <input matInput type="password" required>
+            <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" required>
           </mat-form-field>
-          <button mat-raised-button color="primary" class="create-account-submit-button">Create Account</button>
+          
+          <button mat-raised-button color="primary" class="create-account-submit-button" type="submit">Create Account</button>
         </form>
       </mat-card-content>
     </mat-card>

@@ -19,12 +19,30 @@
     margin-bottom: 20px;
   }
   
+  mat-card-subtitle {
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .success-message {
+    color: green;
+  }
+  
+  .error-message {
+    color: red;
+  }
+
   mat-form-field {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
   
   .create-account-submit-button {
     width: 100%;
+  }
+  .create-account-submit-button:hover {
+    background-color: green; /* Background color on hover */
+    color: white; /* Text color on hover */
   }
   
