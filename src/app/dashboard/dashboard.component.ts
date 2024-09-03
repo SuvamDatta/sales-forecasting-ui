@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { DataFetchService } from '../data-fetch.service';
-import { forkJoin } from 'rxjs';
 
 type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
 
@@ -11,6 +10,7 @@ type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  displayedColumns: string[] = ['Date', 'Store_Name', 'Product_Category', 'Stock_Sold', 'Sales'];
   storeNames: string[] = ['The Corner Store', 'Market Basket', 'Main Street Mart'];
   productCategories: ProductCategory[] = ['Gaming Console', 'Guitar', 'Clarinet'];
   years: string[] = ['2024', '2025', '2026', '2027'];
@@ -24,23 +24,24 @@ export class DashboardComponent implements OnInit {
   lineChart: any;
   barChart: any;
   previousYearData: any;
+  PrevYearConsolidatedData: any;
 
-  constructor(private dataFetchService: DataFetchService) {}
+  constructor(private dataFetchService: DataFetchService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onSelectionChange(): void {
     // Construct the prompt with the selected values
     const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
     const yearPart = this.selectedYear ? `${this.selectedYear}` : '';
     const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
-  
+
     // Make the API call with the current selections
     if (this.selectedStoreName || this.selectedProductCategory || this.selectedYear || this.selectedMonth) {
       this.dataFetchService.getData(prompt).subscribe(data => {
         this.createCharts(data);
       });
-  
+
       // Handle previous year data
       if (this.selectedYear) {
         const previousYear = (parseInt(this.selectedYear, 10) - 1).toString();
@@ -48,6 +49,7 @@ export class DashboardComponent implements OnInit {
         this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
         });
+
       } else {
         // Clear previous year data if no year is selected
         this.previousYearData = null;
@@ -57,8 +59,8 @@ export class DashboardComponent implements OnInit {
       this.previousYearData = null;
     }
   }
-  
-  
+
+
 
   constructPrompt(year: string): string {
     const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
@@ -75,7 +77,7 @@ export class DashboardComponent implements OnInit {
         label: category,
         data: labels.map(date => {
           const entry = data.find(d => d.Date === date && d.Product_Category === category);
-          return entry ? entry.Stock_Sold : 0;
+          return entry ? entry.Sales : 0;
         }),
         fill: false,
         borderColor: this.getColor(category),

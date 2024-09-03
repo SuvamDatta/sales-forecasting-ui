@@ -11,11 +11,17 @@ import { NgChartsModule } from 'ng2-charts';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DataFetchService } from './data-fetch.service';
+import { MatTableModule } from '@angular/material/table';
+import { LoginComponent } from './login/login.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +33,11 @@ import { DataFetchService } from './data-fetch.service';
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
-    NgChartsModule
+    MatTableModule,
+    NgChartsModule,
+    MatCardModule,
+    MatIconModule,
+    AppRoutingModule
   ],
   providers: [DataFetchService],
   bootstrap: [AppComponent]
