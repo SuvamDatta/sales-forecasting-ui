@@ -1,28 +1,41 @@
 <div class="login-container">
-    <div class="image-container">
-      <!-- Add an image or any content here -->
-    </div>
-    <mat-card class="login-card">
-      <mat-card-header>
-        <mat-card-title>Trend Tracking System</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form>
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" required>
-            <mat-icon matSuffix>email</mat-icon>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" required>
-            <mat-icon matSuffix>lock</mat-icon>
-          </mat-form-field>
-          <button mat-raised-button color="primary" class="login-button">Login</button>
-          <label>Don't have an account?</label>
-          <button mat-button color="accent" class="create-account-button" [routerLink]="['/create-account']">Create Account</button>
-        </form>
-      </mat-card-content>
-    </mat-card>
+  <div class="image-container">
+    <!-- Add an image or any content here -->
   </div>
-  
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Trend Tracking System</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <!-- Display error messages at the top -->
+        <mat-card-subtitle *ngIf="message" [ngClass]="{'success-message': successMessage, 'error-message': !successMessage}">
+          {{ message }}
+        </mat-card-subtitle>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" type="email" required #emailInput="ngModel">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+            <ng-container *ngIf="emailInput.errors?.['required']">Email is required</ng-container>
+            <ng-container *ngIf="emailInput.errors?.['email']">Invalid email format</ng-container>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput [(ngModel)]="password" name="password" type="password" required #passwordInput="ngModel">
+          <mat-icon matSuffix>lock</mat-icon>
+          <mat-error *ngIf="passwordInput.invalid && passwordInput.touched">
+            Password is required
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="login-button" type="submit">Login</button>
+        <label>Don't have an account?</label>
+        <button mat-button color="accent" class="create-account-button" [routerLink]="['/create-account']">Create Account</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
