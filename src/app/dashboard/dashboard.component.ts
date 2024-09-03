@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { DataFetchService } from '../data-fetch.service';
-
+import { Router } from '@angular/router';
 type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
-
+interface User {
+  fullName: string,
+  email: string,
+  password: string,
+  isLoggedIn: number
+}
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -20,15 +25,26 @@ export class DashboardComponent implements OnInit {
   selectedProductCategory: string = '';
   selectedYear: string = '';
   selectedMonth: string = '';
+  username: string = '';
 
   lineChart: any;
   barChart: any;
   previousYearData: any;
   PrevYearConsolidatedData: any;
 
-  constructor(private dataFetchService: DataFetchService) { }
+  constructor(private dataFetchService: DataFetchService,private router: Router) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+    const existingUsers = localStorage.getItem('userDetails');
+    let users: User[] = existingUsers ? JSON.parse(existingUsers) : [];
+    const user = users.find(user => user.isLoggedIn == 1);
+    if (user) {
+      //user is logged in
+    }
+    else{
+      this.router.navigate(['/login']); 
+    }
+  }
 
   onSelectionChange(): void {
     // Construct the prompt with the selected values
@@ -59,8 +75,6 @@ export class DashboardComponent implements OnInit {
       this.previousYearData = null;
     }
   }
-
-
 
   constructPrompt(year: string): string {
     const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
@@ -161,5 +175,10 @@ export class DashboardComponent implements OnInit {
       'Gaming Console': isBackground ? 'rgba(75, 192, 192, 0.2)' : 'rgba(75, 192, 192, 1)',
     };
     return colors[category] || (isBackground ? 'rgba(201, 203, 207, 0.2)' : 'rgba(201, 203, 207, 1)');
+  }
+
+  onLogout(): void {
+    localStorage.removeItem('isLoggedIn')   
+    this.router.navigate(['/login']); 
   }
 }

@@ -1,18 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+interface User {
+  fullName: string,
+  email: string,
+  password: string,
+  isLoggedIn: number
+}
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
   message: string = '';
   successMessage: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
+  ngOnInit(): void {
+    const existingUsers = localStorage.getItem('userDetails');
+    const users: User[] = existingUsers ? JSON.parse(existingUsers) : [];
+    users.forEach((user: User) => {
+      user.isLoggedIn = 0;
+    });
+    localStorage.removeItem('userDetails');
+    localStorage.setItem('userDetails', JSON.stringify(users))
+  }
 
   onLogin() {
     if (!this.email || !this.password) {
@@ -24,17 +40,18 @@ export class LoginComponent {
     // Fetch existing user details from local storage
     const existingUsers = localStorage.getItem('userDetails');
     const users = existingUsers ? JSON.parse(existingUsers) : [];
-
-    // Find user with matching email and password
+    const data = { email: this.email };
     const user = users.find((u: { email: string; password: string }) => u.email === this.email && u.password === this.password);
-
     if (user) {
       // User is found, redirect to dashboard or another page
       this.message = 'Login successful!';
       this.successMessage = true;
+      user.isLoggedIn = 1;
+      localStorage.removeItem('userDetails');
+      localStorage.setItem('userDetails', JSON.stringify(users))
       setTimeout(() => {
         this.router.navigate(['/dashboard']); // Change this to your desired route
-      }, 1000); // Redirect after 1 second
+      }, 1000);
     } else {
       // Invalid credentials
       this.message = 'Invalid email or password.';
