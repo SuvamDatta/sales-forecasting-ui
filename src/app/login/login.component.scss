@@ -18,8 +18,7 @@
     padding: 20px;
     flex: 0 0 400px;
     background-color: white;  /* Set background color to white */
-    // box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
   }
   
   mat-card-title {
@@ -30,10 +29,27 @@
   
   mat-form-field {
     width: 100%;
-    margin-bottom: 20px;
   }
   
   .login-button {
     width: 100%;
+    margin-bottom: 15px;
+  }
+  .login-button:hover {
+    background-color: green; /* Background color on hover */
+    color: white; /* Text color on hover */
   }
   
+  .create-account-button {
+    width: 100%;
+    background-color: #007BFF; /* Background color on hover */
+    color: white !important; /* Text color on hover */
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for color change */
+  }
+  
+  .create-account-button:hover {
+    background-color: green; /* Background color on hover */
+    color: white; /* Text color on hover */
+  }
