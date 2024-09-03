@@ -20,7 +20,8 @@
             <mat-label>Email</mat-label>
             <input matInput [(ngModel)]="email" name="email" type="email" required #emailInput="ngModel">
             <mat-error *ngIf="emailInput.invalid && emailInput.touched">
-              Email is required
+              <ng-container *ngIf="emailInput.errors?.['required']">Email is required</ng-container>
+              <ng-container *ngIf="emailInput.errors?.['email']">Invalid email format</ng-container>
             </mat-error>
           </mat-form-field>
           

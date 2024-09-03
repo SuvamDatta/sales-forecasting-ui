@@ -13,18 +13,24 @@ export class CreateAccountComponent {
   confirmPassword: string = '';
   message: string = '';
   successMessage: boolean = false;
-
-  constructor(private router: Router) {}
+  existinguser: string = '';
+  constructor(private router: Router) { }
 
   onCreateAccount() {
+    if (!this.fullName || !this.email || !this.password || !this.confirmPassword) {
+      this.message = 'Please fill in all required fields.';
+      this.successMessage = false;
+      return;
+    }
+
     if (this.password !== this.confirmPassword) {
       this.message = 'Passwords do not match!';
       this.successMessage = false;
       return;
     }
 
-    if (!this.fullName || !this.email || !this.password) {
-      this.message = 'Please fill in all required fields.';
+    if (!this.validateEmail(this.email)) {
+      this.message = 'Please validated email address';
       this.successMessage = false;
       return;
     }
@@ -35,13 +41,32 @@ export class CreateAccountComponent {
       password: this.password
     };
 
-    // Save to local storage
-    localStorage.setItem('userDetails', JSON.stringify(userDetails));
+    const existingUsers = localStorage.getItem('userDetails');
+    const users = existingUsers ? JSON.parse(existingUsers) : [];
 
-    // Optionally, navigate to another page after account creation
-    this.router.navigate(['/login']);
+    // Add new user details to the array
+    users.push({
+      fullName: this.fullName,
+      email: this.email,
+      password: this.password
+    });
 
+    // Save updated user details back to local storage
+    localStorage.setItem('userDetails', JSON.stringify(users));
+
+    // this.fullName = ' ';
+    // this.email = ' ';
+    // this.password = '';
+    // this.confirmPassword = '';
     this.message = 'Account created successfully!';
     this.successMessage = true;
+
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 1500);
+  }
+  validateEmail(email: string): boolean {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
   }
 }
