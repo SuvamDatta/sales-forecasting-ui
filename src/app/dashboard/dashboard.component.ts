@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit {
     const user = users.find(user => user.isLoggedIn == 1);
     if (user) {
       //user is logged in
+      this.username = user.fullName.split(' ')[0];
     }
     else{
       this.router.navigate(['/login']); 

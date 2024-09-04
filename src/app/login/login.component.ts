@@ -40,8 +40,7 @@ export class LoginComponent implements OnInit {
     // Fetch existing user details from local storage
     const existingUsers = localStorage.getItem('userDetails');
     const users = existingUsers ? JSON.parse(existingUsers) : [];
-    const data = { email: this.email };
-    const user = users.find((u: { email: string; password: string }) => u.email === this.email && u.password === this.password);
+    const user = users.find((u: { email: string; password: string }) => u.email === this.email.toLowerCase() && u.password === this.password);
     if (user) {
       // User is found, redirect to dashboard or another page
       this.message = 'Login successful!';

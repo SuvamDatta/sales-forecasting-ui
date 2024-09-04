@@ -59,7 +59,7 @@ export class CreateAccountComponent {
     else {
       users.push({
         fullName: this.fullName,
-        email: this.email,
+        email: this.email.toLowerCase(),
         password: this.password,
         isLoggedIn:0
       });
