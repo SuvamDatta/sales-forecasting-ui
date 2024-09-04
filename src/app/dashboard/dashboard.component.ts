@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
   barChart: any;
   previousYearData: any;
   PrevYearConsolidatedData: any;
-  prevYear:string=''
+  prevYear: string = ''
 
   highlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
     { label: 'Top Store', value: 'None' }
   ];
 
-  constructor(private dataFetchService: DataFetchService, private router: Router,private decimalPipe: DecimalPipe) { }
+  constructor(private dataFetchService: DataFetchService, private router: Router, private decimalPipe: DecimalPipe) { }
 
   ngOnInit(): void {
     const existingUsers = localStorage.getItem('userDetails');
@@ -73,6 +73,9 @@ export class DashboardComponent implements OnInit {
 
     // Make the API call with the current selections
     if (this.selectedStoreName || this.selectedProductCategory || this.selectedYear || this.selectedMonth) {
+      const previousYear = (parseInt(this.selectedYear, 10) - 1).toString();
+      const previousYearPrompt = `${monthPart}${previousYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+      this.prevYear = previousYear
       this.dataFetchService.getData(prompt).subscribe(data => {
         this.createCharts(data);
         this.updateHighlightedItems(data, true);
@@ -80,22 +83,36 @@ export class DashboardComponent implements OnInit {
 
       // Handle previous year data
       if (this.selectedYear) {
-        const previousYear = (parseInt(this.selectedYear, 10) - 1).toString();
-        const previousYearPrompt = `${monthPart}${previousYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
         this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
           this.updateHighlightedItems(previousYearData, false);
-          this.prevYear = previousYear
         });
 
       } else {
         // Clear previous year data if no year is selected
-        this.previousYearData = null;
+        this.clearParams();
       }
     } else {
       // Clear previous year data if no selection is made
-      this.previousYearData = null;
+      this.clearParams();
     }
+  }
+
+  clearParams(){
+    this.previousYearData = null;
+    this.prevYear = '';
+    let totalSales = 0;
+    let totalStockSold = 0;
+    let highestSellingProduct = 'None';
+    let lowestSellingProduct = 'None';
+    let topStore = 'None';
+    this.highlightedItems = [
+      { label: 'Total Sales', value: `$${totalSales}` },
+      { label: 'Total Stock Sold', value: totalStockSold.toString() },
+      { label: 'Highest Selling Product', value: highestSellingProduct },
+      { label: 'Lowest Selling Product', value: lowestSellingProduct },
+      { label: 'Top Store', value: topStore || 'None' }
+    ];
   }
 
   constructPrompt(year: string): string {

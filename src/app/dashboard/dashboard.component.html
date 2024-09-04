@@ -38,22 +38,24 @@
     </mat-select>
   </mat-form-field>
 </div>
-<div class="section-header">Summary of Year: {{selectedYear}}</div>
-<div class="highlighted-labels">
-  <div class="highlighted-item" *ngFor="let item of highlightedItems">
-    <span class="highlighted-label">{{item.label}}</span>
-    <span class="highlighted-value">{{item.value}}</span>
-  </div>
-</div>
-<div class="section-header">Summary of Year: {{prevYear}}</div>
-<div class="highlighted-labels">
+
+<div class="section-header" *ngIf="selectedYear">Summary of Year: {{prevYear}}</div>
+<div class="highlighted-labels" *ngIf="prevYear">
   <div class="highlighted-item" *ngFor="let item of PrevYrhighlightedItems">
     <span class="highlighted-label">{{item.label}}</span>
     <span class="highlighted-value">{{item.value}}</span>
   </div>
 </div>
 
-<div class="charts">
+<div class="section-header" *ngIf="selectedYear">Summary of Year: {{selectedYear}}</div>
+<div class="highlighted-labels" *ngIf="selectedYear">
+  <div class="highlighted-item" *ngFor="let item of highlightedItems">
+    <span class="highlighted-label">{{item.label}}</span>
+    <span class="highlighted-value">{{item.value}}</span>
+  </div>
+</div>
+
+<div class="charts" *ngIf="selectedYear">
   <div class="chart-container">
     <canvas id="lineChart"></canvas>
   </div>
