@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { DataFetchService } from '../data-fetch.service';
 import { Router } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
+
 type ProductCategory = 'Clarinet' | 'Guitar' | 'Gaming Console';
 interface User {
   fullName: string,
@@ -31,6 +33,7 @@ export class DashboardComponent implements OnInit {
   barChart: any;
   previousYearData: any;
   PrevYearConsolidatedData: any;
+  prevYear:string=''
 
   highlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
@@ -47,7 +50,7 @@ export class DashboardComponent implements OnInit {
     { label: 'Top Store', value: 'None' }
   ];
 
-  constructor(private dataFetchService: DataFetchService, private router: Router) { }
+  constructor(private dataFetchService: DataFetchService, private router: Router,private decimalPipe: DecimalPipe) { }
 
   ngOnInit(): void {
     const existingUsers = localStorage.getItem('userDetails');
@@ -82,6 +85,7 @@ export class DashboardComponent implements OnInit {
         this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
           this.updateHighlightedItems(previousYearData, false);
+          this.prevYear = previousYear
         });
 
       } else {
@@ -102,8 +106,8 @@ export class DashboardComponent implements OnInit {
 
   updateHighlightedItems(data: any[], currentYr: boolean): void {
     if (data.length > 0) {
-      const totalSales = data.reduce((sum, item) => sum + (item.Sales || 0), 0);
-      const totalStockSold = data.reduce((sum, item) => sum + (item.Stock_Sold || 0), 0);
+      let totalSales = data.reduce((sum, item) => sum + (item.Sales || 0), 0);
+      let totalStockSold = data.reduce((sum, item) => sum + (item.Stock_Sold || 0), 0);
       const sortedData = [...data].sort((a, b) => (b.Sales || 0) - (a.Sales || 0));
       const highestSellingProduct = sortedData[0] ? sortedData[0].Product_Category : 'None';
       const lowestSellingProduct = sortedData[sortedData.length - 1] ? sortedData[sortedData.length - 1].Product_Category : 'None';
@@ -112,6 +116,9 @@ export class DashboardComponent implements OnInit {
         acc[item.Store_Name] = (acc[item.Store_Name] || 0) + (item.Sales || 0);
         return acc;
       }, {} as Record<string, number>);
+
+      totalSales = this.decimalPipe.transform(totalSales, '1.0-0');
+      totalStockSold = this.decimalPipe.transform(totalStockSold, '1.0-0');
 
       const topStore = Object.keys(storeSales).reduce((a, b) => storeSales[a] > storeSales[b] ? a : b, '');
       if (currentYr) {

@@ -17,6 +17,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { CreateAccountComponent } from './create-account/create-account.component';
+import { DecimalPipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,7 @@ import { CreateAccountComponent } from './create-account/create-account.componen
     MatIconModule,
     AppRoutingModule
   ],
-  providers: [DataFetchService],
+  providers: [DataFetchService,DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
