@@ -34,17 +34,18 @@ export class DashboardComponent implements OnInit {
   previousYearData: any;
   PrevYearConsolidatedData: any;
   prevYear: string = ''
+  showChart:boolean=false;
 
   highlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
-    { label: 'Total Stock Sold', value: '0' },
+    { label: 'Projected Total Stock Sold', value: '0' },
     { label: 'Highest Selling Product', value: 'None' },
     { label: 'Lowest Selling Product', value: 'None' },
     { label: 'Top Store', value: 'None' }
   ];
   PrevYrhighlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
-    { label: 'Total Stock Sold', value: '0' },
+    { label: 'Projected Total Stock Sold', value: '0' },
     { label: 'Highest Selling Product', value: 'None' },
     { label: 'Lowest Selling Product', value: 'None' },
     { label: 'Top Store', value: 'None' }
@@ -79,6 +80,7 @@ export class DashboardComponent implements OnInit {
       this.dataFetchService.getData(prompt).subscribe(data => {
         this.createCharts(data);
         this.updateHighlightedItems(data, true);
+        this.showChart = true;
       });
 
       // Handle previous year data
@@ -86,6 +88,7 @@ export class DashboardComponent implements OnInit {
         this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
           this.updateHighlightedItems(previousYearData, false);
+          this.showChart = true;
         });
 
       } else {
@@ -108,11 +111,19 @@ export class DashboardComponent implements OnInit {
     let topStore = 'None';
     this.highlightedItems = [
       { label: 'Total Sales', value: `$${totalSales}` },
-      { label: 'Total Stock Sold', value: totalStockSold.toString() },
+      { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
       { label: 'Highest Selling Product', value: highestSellingProduct },
       { label: 'Lowest Selling Product', value: lowestSellingProduct },
       { label: 'Top Store', value: topStore || 'None' }
     ];
+    this.PrevYrhighlightedItems = [
+      { label: 'Total Sales', value: `$${totalSales}` },
+      { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
+      { label: 'Highest Selling Product', value: highestSellingProduct },
+      { label: 'Lowest Selling Product', value: lowestSellingProduct },
+      { label: 'Top Store', value: topStore || 'None' }
+    ];
+    this.showChart = false;
   }
 
   constructPrompt(year: string): string {
@@ -141,7 +152,7 @@ export class DashboardComponent implements OnInit {
       if (currentYr) {
         this.highlightedItems = [
           { label: 'Total Sales', value: `$${totalSales}` },
-          { label: 'Total Stock Sold', value: totalStockSold.toString() },
+          { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
           { label: 'Highest Selling Product', value: highestSellingProduct },
           { label: 'Lowest Selling Product', value: lowestSellingProduct },
           { label: 'Top Store', value: topStore || 'None' }
@@ -150,7 +161,7 @@ export class DashboardComponent implements OnInit {
       else {
         this.PrevYrhighlightedItems = [
           { label: 'Total Sales', value: `$${totalSales}` },
-          { label: 'Total Stock Sold', value: totalStockSold.toString() },
+          { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
           { label: 'Highest Selling Product', value: highestSellingProduct },
           { label: 'Lowest Selling Product', value: lowestSellingProduct },
           { label: 'Top Store', value: topStore || 'None' }
