@@ -32,9 +32,24 @@ export class DashboardComponent implements OnInit {
   previousYearData: any;
   PrevYearConsolidatedData: any;
 
-  constructor(private dataFetchService: DataFetchService,private router: Router) { }
+  highlightedItems: { label: string, value: string }[] = [
+    { label: 'Total Sales', value: '$0' },
+    { label: 'Total Stock Sold', value: '0' },
+    { label: 'Highest Selling Product', value: 'None' },
+    { label: 'Lowest Selling Product', value: 'None' },
+    { label: 'Top Store', value: 'None' }
+  ];
+  PrevYrhighlightedItems: { label: string, value: string }[] = [
+    { label: 'Total Sales', value: '$0' },
+    { label: 'Total Stock Sold', value: '0' },
+    { label: 'Highest Selling Product', value: 'None' },
+    { label: 'Lowest Selling Product', value: 'None' },
+    { label: 'Top Store', value: 'None' }
+  ];
 
-  ngOnInit(): void { 
+  constructor(private dataFetchService: DataFetchService, private router: Router) { }
+
+  ngOnInit(): void {
     const existingUsers = localStorage.getItem('userDetails');
     let users: User[] = existingUsers ? JSON.parse(existingUsers) : [];
     const user = users.find(user => user.isLoggedIn == 1);
@@ -42,8 +57,8 @@ export class DashboardComponent implements OnInit {
       //user is logged in
       this.username = user.fullName.split(' ')[0];
     }
-    else{
-      this.router.navigate(['/login']); 
+    else {
+      this.router.navigate(['/login']);
     }
   }
 
@@ -57,6 +72,7 @@ export class DashboardComponent implements OnInit {
     if (this.selectedStoreName || this.selectedProductCategory || this.selectedYear || this.selectedMonth) {
       this.dataFetchService.getData(prompt).subscribe(data => {
         this.createCharts(data);
+        this.updateHighlightedItems(data, true);
       });
 
       // Handle previous year data
@@ -65,6 +81,7 @@ export class DashboardComponent implements OnInit {
         const previousYearPrompt = `${monthPart}${previousYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
         this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
+          this.updateHighlightedItems(previousYearData, false);
         });
 
       } else {
@@ -81,6 +98,41 @@ export class DashboardComponent implements OnInit {
     const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
     const yearPart = year;
     return `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+  }
+
+  updateHighlightedItems(data: any[], currentYr: boolean): void {
+    if (data.length > 0) {
+      const totalSales = data.reduce((sum, item) => sum + (item.Sales || 0), 0);
+      const totalStockSold = data.reduce((sum, item) => sum + (item.Stock_Sold || 0), 0);
+      const sortedData = [...data].sort((a, b) => (b.Sales || 0) - (a.Sales || 0));
+      const highestSellingProduct = sortedData[0] ? sortedData[0].Product_Category : 'None';
+      const lowestSellingProduct = sortedData[sortedData.length - 1] ? sortedData[sortedData.length - 1].Product_Category : 'None';
+
+      const storeSales = data.reduce((acc, item) => {
+        acc[item.Store_Name] = (acc[item.Store_Name] || 0) + (item.Sales || 0);
+        return acc;
+      }, {} as Record<string, number>);
+
+      const topStore = Object.keys(storeSales).reduce((a, b) => storeSales[a] > storeSales[b] ? a : b, '');
+      if (currentYr) {
+        this.highlightedItems = [
+          { label: 'Total Sales', value: `$${totalSales}` },
+          { label: 'Total Stock Sold', value: totalStockSold.toString() },
+          { label: 'Highest Selling Product', value: highestSellingProduct },
+          { label: 'Lowest Selling Product', value: lowestSellingProduct },
+          { label: 'Top Store', value: topStore || 'None' }
+        ];
+      }
+      else {
+        this.PrevYrhighlightedItems = [
+          { label: 'Total Sales', value: `$${totalSales}` },
+          { label: 'Total Stock Sold', value: totalStockSold.toString() },
+          { label: 'Highest Selling Product', value: highestSellingProduct },
+          { label: 'Lowest Selling Product', value: lowestSellingProduct },
+          { label: 'Top Store', value: topStore || 'None' }
+        ];
+      }
+    }
   }
 
   createCharts(data: any[]): void {
@@ -179,7 +231,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onLogout(): void {
-    localStorage.removeItem('isLoggedIn')   
-    this.router.navigate(['/login']); 
+    localStorage.removeItem('isLoggedIn')
+    this.router.navigate(['/login']);
   }
 }
