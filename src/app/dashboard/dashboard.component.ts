@@ -124,6 +124,8 @@ export class DashboardComponent implements OnInit {
       { label: 'Top Store', value: topStore || 'None' }
     ];
     this.showChart = false;
+    this.barChart.destroy();
+    this.lineChart.destroy();
   }
 
   constructPrompt(year: string): string {
