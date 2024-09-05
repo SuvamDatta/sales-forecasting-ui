@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit {
   createCharts(data: any[]): void {
     const labels = [...new Set(data.map(d => d.Date))];
     const productCategories = [...new Set(data.map(d => d.Product_Category))] as ProductCategory[];
-
+  
     const datasets = productCategories.map(category => {
       return {
         label: category,
@@ -189,7 +189,7 @@ export class DashboardComponent implements OnInit {
         borderWidth: 2
       };
     });
-
+  
     // Line Chart
     const lineCanvas = document.getElementById('lineChart') as HTMLCanvasElement;
     const lineCtx = lineCanvas.getContext('2d');
@@ -208,15 +208,21 @@ export class DashboardComponent implements OnInit {
           },
           tooltip: {
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${context.raw}`;
-              }
+              label: (context) => `${context.dataset.label}: ${context.raw}`
             }
+          }
+        },
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const elementIndex = elements[0].index;
+            const clickedDate = labels[elementIndex];
+            const clickedCategory = datasets[elements[0].datasetIndex].label;
+            this.handleChartClick(clickedDate, clickedCategory, 'line');
           }
         }
       }
     });
-
+  
     // Bar Chart
     const barCanvas = document.getElementById('barChart') as HTMLCanvasElement;
     const barCtx = barCanvas.getContext('2d');
@@ -248,15 +254,26 @@ export class DashboardComponent implements OnInit {
           },
           tooltip: {
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${context.raw}`;
-              }
+              label: (context) => `${context.dataset.label}: ${context.raw}`
             }
+          }
+        },
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const elementIndex = elements[0].index;
+            const clickedDate = labels[elementIndex];
+            const clickedCategory = datasets[elements[0].datasetIndex].label;
+            this.handleChartClick(clickedDate, clickedCategory, 'bar');
           }
         }
       }
     });
   }
+  handleChartClick(date: string, category: string, chartType: string): void {
+    // console.log(`Clicked on ${chartType} chart! Date: ${date}, Product Category: ${category}`);
+    // alert(`You clicked on ${chartType} chart for ${category} on ${date}`);
+  }
+    
 
   getColor(category: ProductCategory, isBackground: boolean = false): string {
     const colors: Record<ProductCategory, string> = {
