@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
 
       // Handle previous year data
       if (this.selectedYear) {
-        this.dataFetchService.getData(previousYearPrompt).subscribe(previousYearData => {
+        this.dataFetchService.getPrevYearData(previousYearPrompt).subscribe(previousYearData => {
           this.previousYearData = previousYearData;
           this.updateHighlightedItems(previousYearData, false);
           this.showChart = true;
