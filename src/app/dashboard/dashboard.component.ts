@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit {
       const previousYear = (parseInt(this.selectedYear, 10) - 1).toString();
       const previousYearPrompt = `${monthPart}${previousYear}|${this.selectedStoreName}|${this.selectedProductCategory}`;
       this.prevYear = previousYear
-      this.dataFetchService.getData(prompt).subscribe(data => {
+      this.dataFetchService.getPrevYearData(prompt).subscribe(data => {
         this.createCharts(data);
         this.updateHighlightedItems(data, true);
         this.showChart = true;
