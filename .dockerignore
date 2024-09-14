@@ -1,0 +1,33 @@
+# Node modules directory
+node_modules
+.scannerwork
+/.scannerwork
+
+# Build output
+dist
+.gitignore
+# Logs
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# Dependency directories
+jspm_packages
+
+# Environment files
+.env
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+README.md
