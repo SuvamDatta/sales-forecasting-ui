@@ -18,6 +18,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { CreateAccountComponent } from './create-account/create-account.component';
 import { DecimalPipe } from '@angular/common';
+import { Chart } from 'chart.js/auto';
+import annotationPlugin from 'chartjs-plugin-annotation';
+Chart.register(annotationPlugin);
 
 @NgModule({
   declarations: [
