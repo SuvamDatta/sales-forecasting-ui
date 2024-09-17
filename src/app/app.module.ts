@@ -20,6 +20,9 @@ import { CreateAccountComponent } from './create-account/create-account.componen
 import { DecimalPipe } from '@angular/common';
 import { Chart } from 'chart.js/auto';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import { ProductDetailsModalComponent } from './product-details-modal/product-details-modal.component';
+import { StoreDetailsModalComponent } from './store-details-modal/store-details-modal.component';
+
 Chart.register(annotationPlugin);
 
 @NgModule({
@@ -27,7 +30,9 @@ Chart.register(annotationPlugin);
     AppComponent,
     DashboardComponent,
     LoginComponent,
-    CreateAccountComponent
+    CreateAccountComponent,
+    ProductDetailsModalComponent,
+    StoreDetailsModalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,30 @@
+<div class="modal-overlay">
+  <mat-card class="modal-container">
+    <div class="modal-header">
+      <h1>{{ product.name }}</h1>
+      <button mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Left side: Product Image -->
+      <div class="product-image">
+        <img [src]="product.imageUrl" alt="{{ product.name }}" />
+      </div>
+
+      <!-- Right side: Product Details -->
+      <div class="product-details">
+        <mat-card-content>
+          <p><strong>Description:</strong> {{ product.description }}</p>
+          <p class="price">Price: ${{ product.price }}</p>
+          <!-- Stock and Sales Data -->
+          <div *ngIf="stockAndSalesData">
+            <p>Total Stock Sold: {{ stockAndSalesData.Stock_Sold }}</p>
+            <p>Total Sales: ${{ stockAndSalesData.Sales }}</p>
+          </div>
+        </mat-card-content>
+      </div>
+    </div>
+  </mat-card>
+</div>

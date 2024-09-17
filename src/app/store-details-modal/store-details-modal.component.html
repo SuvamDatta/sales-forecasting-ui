@@ -1,0 +1,27 @@
+<div class="modal-overlay">
+  <mat-card class="modal-container">
+    <div class="modal-header">
+      <h1>{{ store?.name }}</h1>
+      <button mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <!-- Left side: Store Image -->
+      <div class="store-image">
+        <img [src]="store?.imageUrl" alt="{{ store?.name }}" />
+      </div>
+
+      <!-- Right side: Store Details -->
+      <div class="store-details">
+        <mat-card-content>
+          <p><strong>Description:</strong> {{ store?.description }}</p>
+          <p><strong>Open Time:</strong> {{ store?.openTime }}</p>
+          <p><strong>Location:</strong> {{ store?.location }}</p>
+          <p><strong>Manager:</strong> {{ store?.manager }}</p>
+        </mat-card-content>
+      </div>
+    </div>
+  </mat-card>
+</div>

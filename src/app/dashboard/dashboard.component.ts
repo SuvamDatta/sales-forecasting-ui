@@ -51,6 +51,12 @@ export class DashboardComponent implements OnInit {
     { label: 'Top Store', value: 'None' }
   ];
 
+  showModal=false; //to control product modal visibility
+  selectedProduct:any; // for product details popup
+  showStoreModal = false; // To control store modal visibility
+  selectedStore: any; // Store the selected store's details
+  productStockAndSales: any; // Stores stock and sales data for the selected product
+
   constructor(private dataFetchService: DataFetchService, private router: Router, private decimalPipe: DecimalPipe) { }
 
   ngOnInit(): void {
@@ -269,11 +275,6 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-  handleChartClick(date: string, category: string, chartType: string): void {
-    // console.log(`Clicked on ${chartType} chart! Date: ${date}, Product Category: ${category}`);
-    // alert(`You clicked on ${chartType} chart for ${category} on ${date}`);
-  }
-    
 
   getColor(category: ProductCategory, isBackground: boolean = false): string {
     const colors: Record<ProductCategory, string> = {
@@ -284,6 +285,117 @@ export class DashboardComponent implements OnInit {
     return colors[category] || (isBackground ? 'rgba(201, 203, 207, 0.2)' : 'rgba(201, 203, 207, 1)');
   }
 
+
+  handleChartClick(date: string, category: string, chartType: string): void {
+    // console.log(`Clicked on ${chartType} chart! Date: ${date}, Product Category: ${category}`);
+    this.openProductDetails(category);
+  }
+
+  // Method to handle clicking on the highest and the lowest selling product
+  handleProductClick(event: MouseEvent, productCategory: string): void {
+    event.preventDefault(); // Prevent default anchor behavior
+    this.openProductDetails(productCategory);
+  }
+   
+  // Method to handle clicking on the top store value
+  handleStoreClick(event: MouseEvent, storeName: string): void {
+    event.preventDefault(); // Prevent default anchor behavior
+    this.openStoreDetails(storeName); // Open store details modal
+  }
+
+  openProductDetails(productCategory: string): void {
+    // Fetch the product details based on the category
+    console.log('Opening product details for:', productCategory);
+    this.selectedProduct = this.getProductDetails(productCategory);
+    this.showModal = true;
+
+    // Set image based on product category
+    this.selectedProduct.imageUrl = this.getProductImage(productCategory);
+
+    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
+    const yearPart = this.selectedYear ? `${this.selectedYear}` : '';
+    const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
+
+    this.dataFetchService.getPrevYearData(prompt).subscribe(data => {
+      this.productStockAndSales = data;
+    });
+
+  }
+
+
+  getProductImage(productCategory: string): string {
+    const productImages: { [key: string]: string } = {
+      'Gaming Console': 'assets/Gaming Consoles.jpg',
+      'Guitar': 'assets/Guitars.jpg',
+      'Clarinet': 'assets/Clarinets.jpg',
+      // Add more categories as needed
+    };
+  
+    return productImages[productCategory] || 'assets/images/default-product.jpg';
+  }
+
+  closeProductDetails(): void {
+    console.log('Closing product details');
+    this.showModal = false;
+    this.selectedProduct = null;
+    this.productStockAndSales=null;
+  }
+
+  private getProductDetails(productCategory: string): any {
+    const products = {
+      'Gaming Console': { name: 'Gaming Console', description: 'Experience the thrill of gaming with our powerful gaming console. Featuring cutting-edge technology, stunning graphics, and immersive gameplay, this console is perfect for gamers of all ages. Enjoy a wide range of popular games, from action-packed adventures to multiplayer experiences.', price: 30 },
+      'Clarinet': { name: 'Clarinet', description: 'Discover the beauty and versatility of the clarinet. This classic woodwind instrument is ideal for both classical and jazz music. With its rich tone and expressive capabilities, the clarinet offers a rewarding musical experience for players of all levels.', price: 24 },
+      'Guitar': { name: 'Guitar', description: 'Unleash your inner musician with our high-quality guitars. Crafted with precision and attention to detail, these instruments offer exceptional sound and playability. Whether you are a beginner or a seasoned guitarist, our guitars are designed to inspire and elevate your musical journey.', price: 30 }
+    };
+  
+    return products[productCategory as keyof typeof products] || null;
+
+  }
+
+  // Open the store details modal
+  openStoreDetails(storeName: string): void {
+    console.log('Opening store details for:', storeName);
+    this.selectedStore = this.getStoreDetails(storeName);
+    this.showStoreModal = true;
+  }
+
+  // Get the store details based on the store name
+  getStoreDetails(storeName: string): any {
+    const stores = {
+      'The Corner Store': {
+        name: 'The Corner Store',
+        description: 'Nestled in the heart of the community, The Corner Store offers a diverse range of products, including musical instruments like guitars and clarinets, as well as gaming consoles. Known for its friendly atmosphere and personalized service, this local favorite is a go-to destination for both seasoned musicians and casual gamers.',
+        openTime: '8:00 AM - 8:00 PM',
+        location: '123 Main Street, Springfield',
+        manager: 'John Doe',
+        imageUrl: 'assets/TheCornerStore.jpg'
+      },
+      'Market Basket': {
+        name: 'Market Basket',
+        description: 'As a major retailer, Market Basket provides a wide selection of products, including musical instruments and gaming consoles. With its convenient location and competitive prices, this store attracts customers from all walks of life. Whether you are a professional musician or a gaming enthusiast, Market Basket has something to offer.',
+        openTime: '7:00 AM - 10:00 PM',
+        location: '456 Market Road, Springfield',
+        manager: 'Jane Smith',
+        imageUrl: 'assets/MarketBasket.jpg'
+      },
+      'Main Street Mart': {
+        name: 'Main Street Mart',
+        description: 'Main Street Mart is a community-oriented store that prides itself on its commitment to supporting local businesses and musicians. In addition to guitars, gaming consoles, and clarinets, they carry a variety of other products and often host live music events and workshops.',
+        openTime: '9:00 AM - 9:00 PM',
+        location: '789 Main Street, Springfield',
+        manager: 'Mike Johnson',
+        imageUrl: 'assets/MainStreetMart.jpg'
+      }
+    };
+    return stores[storeName as keyof typeof stores] || null;
+  }
+
+  // Close the store details modal
+  closeStoreDetails(): void {
+    console.log('Closing store details');
+    this.showStoreModal = false;
+    this.selectedStore = null;
+  }
   onLogout(): void {
     localStorage.removeItem('isLoggedIn')
     this.router.navigate(['/login']);
