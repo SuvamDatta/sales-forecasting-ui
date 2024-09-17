@@ -7,6 +7,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class StoreDetailsModalComponent {
   @Input() store: any;
+  @Input() stockAndSalesData: any; 
   @Output() close = new EventEmitter<void>();
 //showStoreModal: any;
 

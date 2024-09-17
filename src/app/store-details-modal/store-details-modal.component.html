@@ -20,6 +20,10 @@
           <p><strong>Open Time:</strong> {{ store?.openTime }}</p>
           <p><strong>Location:</strong> {{ store?.location }}</p>
           <p><strong>Manager:</strong> {{ store?.manager }}</p>
+          <div *ngIf="stockAndSalesData">
+            <p><strong>Total Stock Sold:</strong> {{ stockAndSalesData[0].Stock_Sold }}</p>
+            <p><strong>Total Sales:</strong> ${{ stockAndSalesData[0].Sales }}</p>
+          </div>
         </mat-card-content>
       </div>
     </div>

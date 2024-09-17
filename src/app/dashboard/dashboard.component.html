@@ -48,10 +48,10 @@
     <span class="highlighted-label">{{item.label}}</span>
     <span class="highlighted-value">
       <ng-container *ngIf="item.label === 'Highest Selling Product' || item.label === 'Lowest Selling Product'">
-        <a href="#" (click)="handleProductClick($event, item.value,false)">{{item.value}}</a>
+        <a href="#" (click)="handleProductClick($event, item.value,false)"><u>{{item.value}}</u></a>
       </ng-container>
       <ng-container *ngIf="item.label === 'Top Store'">
-        <a href="#" (click)="handleStoreClick($event, item.value)">{{item.value}}</a>
+        <a href="#" (click)="handleStoreClick($event, item.value,false)"><u>{{item.value}}</u></a>
       </ng-container>
       <ng-container *ngIf="item.label !== 'Highest Selling Product' && item.label !== 'Lowest Selling Product' && item.label !== 'Top Store'">
         {{item.value}}
@@ -67,10 +67,10 @@
     <span class="highlighted-label">{{item.label}}</span>
     <span class="highlighted-value">
       <ng-container *ngIf="item.label === 'Highest Selling Product' || item.label === 'Lowest Selling Product'">
-        <a href="#" (click)="handleProductClick($event, item.value,true)">{{item.value}}</a>
+        <a href="#" (click)="handleProductClick($event, item.value,true)"><u>{{item.value}}</u></a>
       </ng-container>
       <ng-container *ngIf="item.label === 'Top Store'">
-        <a href="#" (click)="handleStoreClick($event, item.value)">{{item.value}}</a>
+        <a href="#" (click)="handleStoreClick($event, item.value,true)"><u>{{item.value}}</u></a>
       </ng-container>
       <ng-container *ngIf="item.label !== 'Highest Selling Product' && item.label !== 'Lowest Selling Product' && item.label !== 'Top Store'">
         {{item.value}}
@@ -101,5 +101,6 @@
 <app-store-details-modal
   *ngIf="showStoreModal"
   [store]="selectedStore"
+  [stockAndSalesData]="productStockAndSales"
   (close)="closeStoreDetails()">
 </app-store-details-modal>

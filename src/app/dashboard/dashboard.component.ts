@@ -38,14 +38,14 @@ export class DashboardComponent implements OnInit {
 
   highlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
-    { label: 'Projected Total Stock Sold', value: '0' },
+    { label: 'Total Stock Sold', value: '0' },
     { label: 'Highest Selling Product', value: 'None' },
     { label: 'Lowest Selling Product', value: 'None' },
     { label: 'Top Store', value: 'None' }
   ];
   PrevYrhighlightedItems: { label: string, value: string }[] = [
     { label: 'Total Sales', value: '$0' },
-    { label: 'Projected Total Stock Sold', value: '0' },
+    { label: 'Total Stock Sold', value: '0' },
     { label: 'Highest Selling Product', value: 'None' },
     { label: 'Lowest Selling Product', value: 'None' },
     { label: 'Top Store', value: 'None' }
@@ -158,6 +158,7 @@ export class DashboardComponent implements OnInit {
 
       const topStore = Object.keys(storeSales).reduce((a, b) => storeSales[a] > storeSales[b] ? a : b, '');
       if (currentYr) {
+        const Year = parseInt(this.selectedYear, 10);
         this.highlightedItems = [
           { label: 'Total Sales', value: `$${totalSales}` },
           { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
@@ -165,8 +166,17 @@ export class DashboardComponent implements OnInit {
           { label: 'Lowest Selling Product', value: lowestSellingProduct },
           { label: 'Top Store', value: topStore || 'None' }
         ];
+        if(Year <= 2023){
+          this.highlightedItems[0].label='Total Sales';
+          this.highlightedItems[1].label='Total Stock Sold';
+        }
+        else{
+          this.highlightedItems[0].label='Projected Total Sales';
+          this.highlightedItems[1].label='Projected Total Stock Sold';
+        }
       }
       else {
+        const Year = (parseInt(this.selectedYear, 10) - 1);
         this.PrevYrhighlightedItems = [
           { label: 'Total Sales', value: `$${totalSales}` },
           { label: 'Projected Total Stock Sold', value: totalStockSold.toString() },
@@ -174,6 +184,14 @@ export class DashboardComponent implements OnInit {
           { label: 'Lowest Selling Product', value: lowestSellingProduct },
           { label: 'Top Store', value: topStore || 'None' }
         ];
+        if(Year <= 2023){
+          this.PrevYrhighlightedItems[0].label='Total Sales';
+          this.PrevYrhighlightedItems[1].label='Total Stock Sold';
+        }
+        else{
+          this.PrevYrhighlightedItems[0].label='Projected Total Sales';
+          this.PrevYrhighlightedItems[1].label='Projected Total Stock Sold';
+        }
       }
     }
   }
@@ -298,9 +316,9 @@ export class DashboardComponent implements OnInit {
   }
    
   // Method to handle clicking on the top store value
-  handleStoreClick(event: MouseEvent, storeName: string): void {
+  handleStoreClick(event: MouseEvent, storeName: string, iscurrentYear:boolean): void {
     event.preventDefault(); // Prevent default anchor behavior
-    this.openStoreDetails(storeName); // Open store details modal
+    this.openStoreDetails(storeName,iscurrentYear); // Open store details modal
   }
 
   openProductDetails(productCategory: string, iscurrentYear:boolean): void {
@@ -311,18 +329,26 @@ export class DashboardComponent implements OnInit {
 
     // Set image based on product category
     this.selectedProduct.imageUrl = this.getProductImage(productCategory);
+    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
+    let yearPart = this.selectedYear ? `${this.selectedYear}` : '';
+    
     if(iscurrentYear == true){
-      let detailedData: { Stock_Sold: string, Sales: string }[] = [
-        { Stock_Sold: this.highlightedItems[1].value, Sales: this.highlightedItems[0].value }
-      ];
-      this.productStockAndSales = detailedData;
+
     }
     else{
+      yearPart = (parseInt(this.selectedYear, 10) - 1).toString();
+    }
+    const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${productCategory}`;
+    this.dataFetchService.getPrevYearData(prompt).subscribe(data => {
+      let totalSales = data.reduce((sum, item) => sum + (item.Sales || 0), 0);
+      let totalStockSold = data.reduce((sum, item) => sum + (item.Stock_Sold || 0), 0);
+      totalSales = this.decimalPipe.transform(totalSales, '1.0-0');
+      totalStockSold = this.decimalPipe.transform(totalStockSold, '1.0-0');
       let detailedData: { Stock_Sold: string, Sales: string }[] = [
-        { Stock_Sold: this.PrevYrhighlightedItems[1].value, Sales: this.PrevYrhighlightedItems[0].value }
+        { Stock_Sold: totalStockSold, Sales: totalSales }
       ];
       this.productStockAndSales = detailedData;
-    }
+    });
   }
 
 
@@ -356,8 +382,28 @@ export class DashboardComponent implements OnInit {
   }
 
   // Open the store details modal
-  openStoreDetails(storeName: string): void {
+  openStoreDetails(storeName: string, iscurrentYear:boolean): void {
     console.log('Opening store details for:', storeName);
+    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
+    let yearPart = this.selectedYear ? `${this.selectedYear}` : '';
+    
+    if(iscurrentYear == true){
+
+    }
+    else{
+      yearPart = (parseInt(this.selectedYear, 10) - 1).toString();
+    }
+    const prompt = `${monthPart}${yearPart}|${storeName}|${this.selectedProductCategory}`;
+    this.dataFetchService.getPrevYearData(prompt).subscribe(data => {
+      let totalSales = data.reduce((sum, item) => sum + (item.Sales || 0), 0);
+      let totalStockSold = data.reduce((sum, item) => sum + (item.Stock_Sold || 0), 0);
+      totalSales = this.decimalPipe.transform(totalSales, '1.0-0');
+      totalStockSold = this.decimalPipe.transform(totalStockSold, '1.0-0');
+      let detailedData: { Stock_Sold: string, Sales: string }[] = [
+        { Stock_Sold: totalStockSold, Sales: totalSales }
+      ];
+      this.productStockAndSales = detailedData;
+    });
     this.selectedStore = this.getStoreDetails(storeName);
     this.showStoreModal = true;
   }
