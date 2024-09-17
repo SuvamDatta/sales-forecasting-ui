@@ -17,19 +17,16 @@ COPY . .
 RUN ng build --configuration production
 
 # Stage 2: Serve the Angular application with Nginx
-FROM nginx:alpine
+FROM nginxinc/nginx-unprivileged
 
 # Remove the default Nginx configuration
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copy the custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built application to Nginx server
 COPY --from=build /app/dist/sales-forecasting-uiapp /usr/share/nginx/html
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8080
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
