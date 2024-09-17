@@ -48,7 +48,7 @@
     <span class="highlighted-label">{{item.label}}</span>
     <span class="highlighted-value">
       <ng-container *ngIf="item.label === 'Highest Selling Product' || item.label === 'Lowest Selling Product'">
-        <a href="#" (click)="handleProductClick($event, item.value)">{{item.value}}</a>
+        <a href="#" (click)="handleProductClick($event, item.value,false)">{{item.value}}</a>
       </ng-container>
       <ng-container *ngIf="item.label === 'Top Store'">
         <a href="#" (click)="handleStoreClick($event, item.value)">{{item.value}}</a>
@@ -67,7 +67,7 @@
     <span class="highlighted-label">{{item.label}}</span>
     <span class="highlighted-value">
       <ng-container *ngIf="item.label === 'Highest Selling Product' || item.label === 'Lowest Selling Product'">
-        <a href="#" (click)="handleProductClick($event, item.value)">{{item.value}}</a>
+        <a href="#" (click)="handleProductClick($event, item.value,true)">{{item.value}}</a>
       </ng-container>
       <ng-container *ngIf="item.label === 'Top Store'">
         <a href="#" (click)="handleStoreClick($event, item.value)">{{item.value}}</a>
@@ -93,6 +93,7 @@
 <app-product-details-modal
   *ngIf="showModal"
   [product]="selectedProduct"
+  [stockAndSalesData]="productStockAndSales"
   (close)="closeProductDetails()">
 </app-product-details-modal>
 

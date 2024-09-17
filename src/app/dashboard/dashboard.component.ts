@@ -288,13 +288,13 @@ export class DashboardComponent implements OnInit {
 
   handleChartClick(date: string, category: string, chartType: string): void {
     // console.log(`Clicked on ${chartType} chart! Date: ${date}, Product Category: ${category}`);
-    this.openProductDetails(category);
+    this.openProductDetails(category,true);
   }
 
   // Method to handle clicking on the highest and the lowest selling product
-  handleProductClick(event: MouseEvent, productCategory: string): void {
+  handleProductClick(event: MouseEvent, productCategory: string,iscurrentYear: boolean): void {
     event.preventDefault(); // Prevent default anchor behavior
-    this.openProductDetails(productCategory);
+    this.openProductDetails(productCategory,iscurrentYear);
   }
    
   // Method to handle clicking on the top store value
@@ -303,7 +303,7 @@ export class DashboardComponent implements OnInit {
     this.openStoreDetails(storeName); // Open store details modal
   }
 
-  openProductDetails(productCategory: string): void {
+  openProductDetails(productCategory: string, iscurrentYear:boolean): void {
     // Fetch the product details based on the category
     console.log('Opening product details for:', productCategory);
     this.selectedProduct = this.getProductDetails(productCategory);
@@ -311,15 +311,18 @@ export class DashboardComponent implements OnInit {
 
     // Set image based on product category
     this.selectedProduct.imageUrl = this.getProductImage(productCategory);
-
-    const monthPart = this.selectedMonth ? `${this.selectedMonth}-` : '-';
-    const yearPart = this.selectedYear ? `${this.selectedYear}` : '';
-    const prompt = `${monthPart}${yearPart}|${this.selectedStoreName}|${this.selectedProductCategory}`;
-
-    this.dataFetchService.getPrevYearData(prompt).subscribe(data => {
-      this.productStockAndSales = data;
-    });
-
+    if(iscurrentYear == true){
+      let detailedData: { Stock_Sold: string, Sales: string }[] = [
+        { Stock_Sold: this.highlightedItems[1].value, Sales: this.highlightedItems[0].value }
+      ];
+      this.productStockAndSales = detailedData;
+    }
+    else{
+      let detailedData: { Stock_Sold: string, Sales: string }[] = [
+        { Stock_Sold: this.PrevYrhighlightedItems[1].value, Sales: this.PrevYrhighlightedItems[0].value }
+      ];
+      this.productStockAndSales = detailedData;
+    }
   }
 
 

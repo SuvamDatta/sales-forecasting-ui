@@ -20,8 +20,8 @@
           <p class="price">Price: ${{ product.price }}</p>
           <!-- Stock and Sales Data -->
           <div *ngIf="stockAndSalesData">
-            <p>Total Stock Sold: {{ stockAndSalesData.Stock_Sold }}</p>
-            <p>Total Sales: ${{ stockAndSalesData.Sales }}</p>
+            <p class="price">Total Stock Sold: {{ stockAndSalesData[0].Stock_Sold }}</p>
+            <p class="price">Total Sales: {{ stockAndSalesData[0].Sales }}</p>
           </div>
         </mat-card-content>
       </div>
