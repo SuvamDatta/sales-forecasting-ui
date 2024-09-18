@@ -25,8 +25,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built application to Nginx server
 COPY --from=build /app/dist/sales-forecasting-uiapp /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 8080
+EXPOSE 8081
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
